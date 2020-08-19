@@ -1,0 +1,7 @@
+config:
+  azure:location: westeurope
+  iac-workload:vnetAddressSpaces: 10.2.0.0/16
+  iac-workload:agwSubnetAddressPrefixes: 10.2.16.0/27
+  iac-workload:aksSubnetAddressPrefixes: 10.2.0.0/20
+  iac-workload:keyVaultSecretId:
+    secure: AAABABmuyjVXFI0TlA47ohS01+jF8kt/dxErwm+Dzm3bryoaiMr2RGSWP+Fs+HBYWj6M57Gf03EO1np2PWOYErE3x0l6fj/m6UZ0MdR+4+5xIaFfdKbOnZYpewnSnGduSmLwmt/ObpttuMieLo2NkgwObbK3Kyqb3tABY0JMMAvGdJPs8A==

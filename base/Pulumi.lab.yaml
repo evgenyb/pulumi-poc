@@ -1,2 +1,9 @@
 config:
   azure:location: westeurope
+  iac-base:apim.certificate.proxy.keyvaultid:
+    secure: AAABAIOJjKKlYZgpabdIaXeY9F32MXWs950qLSWnibgHGe41rzi137CD3gJPJJq5jxG1mliZU1+O5FvC28fZoevXbHdu6g9ocIAUiS5k7PNy2R7hjMyuJmxAVAFn+EYSP4oQXeq2Ho+xvIEB2J3Wa5nC7W58e7cvyGj2a22CEUY9qL7ViQ==
+  iac-base:vnet.subnets.afw.addressPrefixes: 10.10.0.64/26
+  iac-base:vnet.subnets.apim.addressPrefixes: 10.10.0.0/27
+  iac-base:vnet.subnets.agw.addressPrefixes: 10.3.16.0/27
+  iac-base:vnet.subnets.aks.addressPrefixes: 10.3.0.0/20
+  iac-base:vnet.addressSpaces: 10.10.0.0/16

@@ -1,0 +1,19 @@
+﻿kind: Namespace
+apiVersion: v1
+metadata:
+  name: logging
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: msi
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: dynatrace
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: monitoring

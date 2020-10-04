@@ -1,7 +1,12 @@
 config:
   azure:location: westeurope
-  iac-workload:vnetAddressSpaces: 10.2.0.0/16
-  iac-workload:agwSubnetAddressPrefixes: 10.2.16.0/27
-  iac-workload:aksSubnetAddressPrefixes: 10.2.0.0/20
+  iac-workload:apim.backend.ip: 10.10.0.5
   iac-workload:keyVaultSecretId:
-    secure: AAABABmuyjVXFI0TlA47ohS01+jF8kt/dxErwm+Dzm3bryoaiMr2RGSWP+Fs+HBYWj6M57Gf03EO1np2PWOYErE3x0l6fj/m6UZ0MdR+4+5xIaFfdKbOnZYpewnSnGduSmLwmt/ObpttuMieLo2NkgwObbK3Kyqb3tABY0JMMAvGdJPs8A==
+    secure: AAABAFIuyZgZBAHIfuHQHDnopsSAT6HqtjpdGFx6NwQeMVCKKCsZOjLiefA54p+MLDqGXTK8fLVSPj3XmipGbmoTUymqG4geUTseMfr/H4tQ8N929z5IJCX4Y9j9+Jz03CzUBJyrgCron2xbxSu8az7Zbh8+dwcb5ziXTLsR+KS4+j8nUw==
+  iac-workload:teamPlatformAADId:
+    secure: AAABAH36eu39GPfyCor9KscQVYVJGfgxm4RbSmn/NShOXq5fThA35pyRxfTsFW1PqKJBiZP5N9gX8Ta8al/6XVeWQjc=
+  iac-workload:tenantId:
+    secure: AAABACHC6Mu9uqkBto6hKokgtzCToaGbel10Ec21WaZ1Ngd8d5hd8ihK37oM+tr7t9ZXhbuIdgyu9GVNwyZJG4q52ac=
+  iac-workload:vnet.addressSpaces: 10.4.0.0/16
+  iac-workload:vnet.subnets.agw.addressPrefixes: 10.4.16.0/27
+  iac-workload:vnet.subnets.aks.addressPrefixes: 10.4.0.0/20

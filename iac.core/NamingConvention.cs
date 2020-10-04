@@ -1,4 +1,6 @@
-﻿namespace iac.core
+﻿using Pulumi;
+
+namespace iac.core
 {
     public static class NamingConvention
     {
@@ -26,6 +28,36 @@
         public static string GetManagedIdentityName(string miName, string environment)
         {
             return $"{BasePrefix}-{environment}-{miName}-mi";
+        }
+
+        public static string GetApimName(string environment)
+        {
+            return $"{BasePrefix}-{environment}-apim";
+        }
+
+        public static string GetFirewallName(string environment)
+        {
+            return $"{BasePrefix}-{environment}-azfw";
+        }
+
+        public static string GetAksName(string environment)
+        {
+            return $"{BasePrefix}-{environment}-aks";
+        }
+
+        public static string GetAppInsightName(string environment)
+        {
+            return $"{BasePrefix}-{environment}-ai";
+        }
+
+        public static string GetLogAnalyticsName(string environment)
+        {
+            return $"{BasePrefix}-{environment}-la";
+        }
+
+        public static string GetNetworkSecurityGroup(string nsgName, string environment)
+        {
+            return $"{BasePrefix}-{environment}-{nsgName}-nsg";
         }
     }
 }

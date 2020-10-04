@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iac-workload", "workload\ia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iac.core", "iac.core\iac.core.csproj", "{FC24298E-406B-47B7-B535-8397E1CE1B82}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "k8s", "k8s\k8s.csproj", "{5BD64EAE-6984-44E4-AC35-5619A800DA8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FC24298E-406B-47B7-B535-8397E1CE1B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC24298E-406B-47B7-B535-8397E1CE1B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC24298E-406B-47B7-B535-8397E1CE1B82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD64EAE-6984-44E4-AC35-5619A800DA8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD64EAE-6984-44E4-AC35-5619A800DA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD64EAE-6984-44E4-AC35-5619A800DA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD64EAE-6984-44E4-AC35-5619A800DA8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,14 +1,16 @@
 using iac.core;
 using Pulumi;
-using Pulumi.Azure.Authorization;
+using Pulumi.Azure.ContainerService;
+using Pulumi.Azure.ContainerService.Inputs;
 using Pulumi.Azure.Core;
 using Pulumi.Azure.Network;
-using Pulumi.Azure.Network.Inputs;
 
 class WorkloadStack : Stack
 {
     public WorkloadStack()
     {
+        
+        var baseStack = new StackReference("evgenyb/iac-base/lab");
         var config = new Config();
         var environment = Deployment.Instance.StackName;
         
@@ -29,7 +31,7 @@ class WorkloadStack : Stack
             ResourceGroupName = resourceGroup.Name,
             AddressSpaces =
             {
-                config.Require("vnetAddressSpaces")
+                config.Require("vnet.addressSpaces")
             },
             Tags = 
             {
@@ -46,7 +48,7 @@ class WorkloadStack : Stack
             VirtualNetworkName = vnet.Name,
             AddressPrefixes =
             {
-                config.Require("aksSubnetAddressPrefixes")
+                config.Require("vnet.subnets.aks.addressPrefixes")
             },
         });
         
@@ -57,142 +59,276 @@ class WorkloadStack : Stack
             VirtualNetworkName = vnet.Name,
             AddressPrefixes =
             {
-                config.Require("agwSubnetAddressPrefixes")
+                config.Require("vnet.subnets.agw.addressPrefixes")
             },
         });
+        
+        // var agwName = NamingConvention.GetAGWName("api", environment);
+        // var agwPublicIp = new PublicIp("agw-api-pip", new PublicIpArgs
+        // {
+        //     Name = NamingConvention.GetPublicIpName("agw-api", environment),
+        //     ResourceGroupName = resourceGroup.Name,
+        //     Sku = "Standard",
+        //     AllocationMethod = "Static",
+        //     DomainNameLabel = agwName
+        // });
+        //
+        // var agwMI = new UserAssignedIdentity("agw-mi", new UserAssignedIdentityArgs
+        // {
+        //     Name = NamingConvention.GetManagedIdentityName("agw", environment),
+        //     ResourceGroupName = resourceGroup.Name
+        // });
+        //
+        // var apiAgw = new ApplicationGateway("agw-api", new ApplicationGatewayArgs
+        // {
+        //     Name = agwName,
+        //     ResourceGroupName = resourceGroup.Name,
+        //     Identity = new ApplicationGatewayIdentityArgs
+        //     {
+        //         Type = "UserAssigned",
+        //         IdentityIds = agwMI.Id
+        //     },
+        //     Sku = new ApplicationGatewaySkuArgs
+        //     {
+        //         Name = "WAF_v2",
+        //         Tier = "WAF_v2",
+        //         Capacity = 1
+        //     },
+        //     SslCertificates = new []
+        //     {
+        //         new ApplicationGatewaySslCertificateArgs
+        //         {
+        //             Name = "gateway-listener",
+        //             KeyVaultSecretId = config.Require("keyVaultSecretId")
+        //         }
+        //     },
+        //     FrontendPorts = new []
+        //     {
+        //         new ApplicationGatewayFrontendPortArgs
+        //         {
+        //             Name = "port443",
+        //             Port = 443
+        //         },
+        //         new ApplicationGatewayFrontendPortArgs
+        //         {
+        //             Name = "port80",
+        //             Port = 80
+        //         }
+        //     },
+        //     GatewayIpConfigurations = new []
+        //     {
+        //         new ApplicationGatewayGatewayIpConfigurationArgs
+        //         {
+        //             Name = "appGatewayIpConfig",
+        //             SubnetId = agwSubnet.Id
+        //         }
+        //     },
+        //     FrontendIpConfigurations = new []
+        //     {
+        //         new ApplicationGatewayFrontendIpConfigurationArgs
+        //         {
+        //             Name = "appGatewayFrontendIP",
+        //             PublicIpAddressId = agwPublicIp.Id
+        //         }
+        //     },
+        //     HttpListeners = new []
+        //     {
+        //         new ApplicationGatewayHttpListenerArgs
+        //         {
+        //             Name = "gateway-listener",    
+        //             FrontendIpConfigurationName = "appGatewayFrontendIP",
+        //             FrontendPortName = "port443",
+        //             Protocol = "Https",
+        //             HostName = "iac-lab-api.iac-labs.com",
+        //             RequireSni = true,
+        //             SslCertificateName = "gateway-listener"
+        //         },
+        //         new ApplicationGatewayHttpListenerArgs
+        //         {
+        //             Name = "management-listener",    
+        //             FrontendIpConfigurationName = "appGatewayFrontendIP",
+        //             FrontendPortName = "port443",
+        //             Protocol = "Https",
+        //             HostName = "iac-lab-management.iac-labs.com",
+        //             RequireSni = true,
+        //             SslCertificateName = "gateway-listener"
+        //         },
+        //         new ApplicationGatewayHttpListenerArgs
+        //         {
+        //             Name = "portal-listener",    
+        //             FrontendIpConfigurationName = "appGatewayFrontendIP",
+        //             FrontendPortName = "port443",
+        //             Protocol = "Https",
+        //             HostName = "iac-lab-portal.iac-labs.com",
+        //             RequireSni = true,
+        //             SslCertificateName = "gateway-listener"
+        //         }
+        //     },
+        //     BackendAddressPools = new[]
+        //     {
+        //         new ApplicationGatewayBackendAddressPoolArgs
+        //         {
+        //             Name = "apim-backend-pool",
+        //             IpAddresses = config.RequireSecret("apim.backend.ip")
+        //         }
+        //     },
+        //     Probes = new[]
+        //     {
+        //         new ApplicationGatewayProbeArgs
+        //         {
+        //             Name = "apim-probe",
+        //             Protocol = "Https",
+        //             Path = "/status-0123456789abcdef",
+        //             Host = "iac-lab-api.iac-labs.com",
+        //             Interval = 30,
+        //             Timeout = 120,
+        //             UnhealthyThreshold = 8,
+        //             PickHostNameFromBackendHttpSettings = false,
+        //             MinimumServers = 0
+        //         }
+        //     },
+        //     BackendHttpSettings = new []
+        //     {
+        //         new ApplicationGatewayBackendHttpSettingArgs
+        //         {
+        //             Name = "apim-settings",
+        //             Port = 443,
+        //             Protocol = "Https",
+        //             CookieBasedAffinity = "Disabled",
+        //             PickHostNameFromBackendAddress = false,
+        //             RequestTimeout = 30,
+        //             ProbeName = "apim-probe"
+        //         }
+        //     },
+        //     RequestRoutingRules = new[]
+        //     {
+        //         new ApplicationGatewayRequestRoutingRuleArgs
+        //         {
+        //             Name = "gateway",
+        //             RuleType = "Basic",
+        //             HttpListenerName = "gateway-listener",
+        //             BackendAddressPoolName = "apim-backend-pool",
+        //             BackendHttpSettingsName = "apim-settings"
+        //         },
+        //         new ApplicationGatewayRequestRoutingRuleArgs
+        //         {
+        //             Name = "management",
+        //             RuleType = "Basic",
+        //             HttpListenerName = "management-listener",
+        //             BackendAddressPoolName = "apim-backend-pool",
+        //             BackendHttpSettingsName = "apim-settings"
+        //         },
+        //         new ApplicationGatewayRequestRoutingRuleArgs
+        //         {
+        //             Name = "portal",
+        //             RuleType = "Basic",
+        //             HttpListenerName = "portal-listener",
+        //             BackendAddressPoolName = "apim-backend-pool",
+        //             BackendHttpSettingsName = "apim-settings"
+        //         },
+        //     }
+        // });
+        //
+        // var appInsight = new Insights("ai", new InsightsArgs
+        // {
+        //     Name = NamingConvention.GetAppInsightName(environment),
+        //     ResourceGroupName = resourceGroup.Name,
+        //     Location = resourceGroup.Location,
+        //     ApplicationType = "web",
+        //     
+        // });
 
-        var agwName = NamingConvention.GetAGWName("api", environment);
-        var publicId = new PublicIp("agw-api-pip", new PublicIpArgs
+        // var la = new AnalyticsWorkspace("la", new AnalyticsWorkspaceArgs
+        // {
+        //     Name = NamingConvention.GetLogAnalyticsName(environment),
+        //     ResourceGroupName = resourceGroup.Name,
+        //     Location = resourceGroup.Location,
+        //     Sku = "PerGB2018"
+        // });
+        
+        var aksEgressPublicIp = new PublicIp("aks-egress-pip", new PublicIpArgs
         {
-            Name = NamingConvention.GetPublicIpName("agw-api", environment),
+            Name = NamingConvention.GetPublicIpName("aks-egress", environment),
             ResourceGroupName = resourceGroup.Name,
             Sku = "Standard",
-            AllocationMethod = "Static",
-            DomainNameLabel = agwName
+            AllocationMethod = "Static"
         });
-        
-        var agwMI = new UserAssignedIdentity("agw-mi", new UserAssignedIdentityArgs
+
+        var logAnalyticsWorkspaceId = baseStack.RequireOutput("LogAnalyticsWorkspaceId").Apply(x => x.ToString());
+        var aks = new KubernetesCluster("aks", new KubernetesClusterArgs
         {
-            Name = NamingConvention.GetManagedIdentityName("agw", environment),
-            ResourceGroupName = resourceGroup.Name
-        });
-        
-        var agw = new ApplicationGateway("agw-api", new ApplicationGatewayArgs
-        {
-            Name = agwName,
+            Name = NamingConvention.GetAksName(environment),
             ResourceGroupName = resourceGroup.Name,
-            Identity = new ApplicationGatewayIdentityArgs
+            Location = resourceGroup.Location,
+            Identity = new KubernetesClusterIdentityArgs
             {
-                Type = "UserAssigned",
-                IdentityIds = agwMI.Id
+                Type = "SystemAssigned"
             },
-            Sku = new ApplicationGatewaySkuArgs
+            DefaultNodePool = new KubernetesClusterDefaultNodePoolArgs
             {
-                Name = "WAF_v2",
-                Tier = "WAF_v2",
-                Capacity = 1
+                Name = "aksagentpool",
+                NodeCount = 1,
+                VmSize = "Standard_B2s",
+                OsDiskSizeGb = 30,
+                VnetSubnetId = aksSubnet.Id
             },
-            SslCertificates = new []
+            DnsPrefix = "iacpulumiaks",
+            RoleBasedAccessControl = new KubernetesClusterRoleBasedAccessControlArgs
             {
-                new ApplicationGatewaySslCertificateArgs
+                Enabled = true,
+                AzureActiveDirectory = new KubernetesClusterRoleBasedAccessControlAzureActiveDirectoryArgs
                 {
-                    Name = "gateway-listener",
-                    KeyVaultSecretId = config.Require("keyVaultSecretId")
+                    AdminGroupObjectIds = config.RequireSecret("teamPlatformAADId"),
+                    TenantId = config.RequireSecret("tenantId"),
+                    Managed = true
                 }
             },
-            FrontendPorts = new []
+            NetworkProfile = new KubernetesClusterNetworkProfileArgs
             {
-                new ApplicationGatewayFrontendPortArgs
+                NetworkPlugin = "azure",
+                NetworkPolicy = "calico",
+                DnsServiceIp = "10.2.2.254",
+                ServiceCidr = "10.2.2.0/24",
+                DockerBridgeCidr = "172.17.0.1/16",
+                LoadBalancerProfile = new KubernetesClusterNetworkProfileLoadBalancerProfileArgs
                 {
-                    Name = "port443",
-                    Port = 443
-                },
-                new ApplicationGatewayFrontendPortArgs
-                {
-                    Name = "port80",
-                    Port = 80
-                }
-            },
-            GatewayIpConfigurations = new []
-            {
-                new ApplicationGatewayGatewayIpConfigurationArgs
-                {
-                    Name = "appGatewayIpConfig",
-                    SubnetId = agwSubnet.Id
-                }
-            },
-            FrontendIpConfigurations = new []
-            {
-                new ApplicationGatewayFrontendIpConfigurationArgs
-                {
-                    Name = "appGatewayFrontendIP",
-                    PublicIpAddressId = publicId.Id
-                }
-            },
-            HttpListeners = new []
-            {
-                new ApplicationGatewayHttpListenerArgs
-                {
-                    Name = "gateway-listener",    
-                    FrontendIpConfigurationName = "appGatewayFrontendIP",
-                    FrontendPortName = "port443",
-                    Protocol = "Https",
-                    HostName = $"{agwName}.iac-labs.com",
-                    RequireSni = true,
-                    SslCertificateName = "gateway-listener"
-                }
-            },
-            BackendAddressPools = new[]
-            {
-                new ApplicationGatewayBackendAddressPoolArgs
-                {
-                    Name = "api-a-pool",
-                    Fqdns = new []
+                    OutboundIpAddressIds = new []
                     {
-                        "api-a.iac-lab-green-aks.iac-labs.com"
+                        aksEgressPublicIp.Id             
                     }
                 }
             },
-            Probes = new[]
+            AddonProfile = new KubernetesClusterAddonProfileArgs
             {
-                new ApplicationGatewayProbeArgs
+                OmsAgent = new KubernetesClusterAddonProfileOmsAgentArgs
                 {
-                    Name = "api-a-probe",
-                    Protocol = "Http",
-                    Path = "/health",
-                    Interval = 30,
-                    Timeout = 30,
-                    UnhealthyThreshold = 3,
-                    PickHostNameFromBackendHttpSettings = true,
-                    MinimumServers = 0
-                }
-            },
-            BackendHttpSettings = new []
-            {
-                new ApplicationGatewayBackendHttpSettingArgs
+                    Enabled = true,
+                    LogAnalyticsWorkspaceId = logAnalyticsWorkspaceId
+                },
+                KubeDashboard = new KubernetesClusterAddonProfileKubeDashboardArgs
                 {
-                    Name = "api-a-settings",
-                    Port = 80,
-                    Protocol = "Http",
-                    CookieBasedAffinity = "Disabled",
-                    PickHostNameFromBackendAddress = true,
-                    AffinityCookieName = "ApplicationGatewayAffinity",
-                    RequestTimeout = 30,
-                    ProbeName = "api-a-probe"
-                    
-                }
-            },
-            RequestRoutingRules = new[]
-            {
-                new ApplicationGatewayRequestRoutingRuleArgs
-                {
-                    Name = "api-a",
-                    RuleType = "Basic",
-                    HttpListenerName = "gateway-listener",
-                    BackendAddressPoolName = "api-a-pool",
-                    BackendHttpSettingsName = "api-a-settings"
+                    Enabled = false
                 }
             }
         });
+        
+        var pool = new KubernetesClusterNodePool("workload-pool", new KubernetesClusterNodePoolArgs
+        {
+            Name = "workload",
+            KubernetesClusterId = aks.Id,
+            Mode = "User",
+            NodeCount = 1,
+            VmSize = "Standard_B2s",
+            OsDiskSizeGb = 30,
+            VnetSubnetId = aksSubnet.Id,
+            NodeLabels = 
+            {
+                {"disk", "ssd"},
+                {"type", "workload"}
+            }
+        });
+
+        this.KubeConfig = aks.KubeConfigRaw;
     }
+    [Output] public Output<string> KubeConfig { get; set; }
 }
